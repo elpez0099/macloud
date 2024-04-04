@@ -1,0 +1,397 @@
+{
+    "validation_rules": [
+        {
+            "name": "name",
+            "type": "str",
+            "required": true
+        },
+        {
+            "name": "description",
+            "type": "str",
+            "required": false
+        },
+        {
+            
+            "name": "permissions",
+            "type": "dict",
+            "required": false,
+            "validation_rules": [
+                {
+                    "name": "roles",
+                    "type": "list",
+                    "required": false,
+                    "from_list": ["admin", "user"]
+                }
+            ]
+        },
+        {
+            "name": "logging",
+            "type": "dict",
+            "required": false,
+            "validation_rules": [
+                {
+                    "name": "enabled",
+                    "type": "bool",
+                    "required": true
+                },
+                {
+                    "name": "format",
+                    "type": "str",
+                    "required": false,
+                    "allowed_variables": ["vendor_config", "execution_timestamp", "execution_type", "user"]
+                },
+                {
+                    "name": "lifetime",
+                    "type": "int",
+                    "required": true,
+                    "min_value": 0,
+                    "max_value": 99999999999
+                }
+            ]
+        },
+        {
+            "name": "notifications",
+            "type": "dict",
+            "required": false,
+            "validation_rules": [
+                {
+                    "name": "enabled",
+                    "type": "bool",
+                    "required": true
+                },
+                {
+                    "name": "error_recipient_list",
+                    "type": "list",
+                    "required": false,
+                    "validation_pattern": "email"
+                },
+                {
+                    "name": "report_recipient_list",
+                    "type": "list",
+                    "required": false,
+                    "validation_pattern": "email"
+                }
+            ]
+        },
+        {
+            "name": "execution_settings",
+            "type": "dict",
+            "required": false,
+            "validation_rules": [
+                {
+                    "name": "event_occurrence",
+                    "type": "str",
+                    "required": true,
+                    "from_list": ["custom", "daily", "weekly", "workweek"]
+                },
+                {
+                    "name": "execute_at",
+                    "type": "list",
+                    "required": false,
+                    "validation_pattern": "24_hour_time"
+                },
+                {
+                    "name": "custom_datetime_settings",
+                    "type": "list",
+                    "required": false,
+                    "validation_rules": [
+                        {
+                            "name": "day",
+                            "type": "list",
+                            "required": false,
+                            "from_list": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+                        },
+                        {
+                            "name": "execute_at",
+                            "type": "list",
+                            "required": false,
+                            "validation_pattern": "24_hour_time"
+                        }
+                    ]
+                },
+                {
+                    "name": "inventory_data_lifetime",
+                    "type": "int",
+                    "required": false
+                },
+                {
+                    "name": "reports_data_lifetime",
+                    "type": "int",
+                    "required": false
+                }
+            ]
+        },
+        {
+            "name": "pipeline",
+            "type": "list",
+            "required": false,
+            "validation_rules": [
+                {
+                    "name": "type",
+                    "type": "str",
+                    "required": false,
+                    "from_list": ["request", "file"]
+                },
+                {
+                    "name": "name",
+                    "type": "str",
+                    "required": false
+                },
+                {
+                    "name": "description",
+                    "type": "str",
+                    "required": false
+                },
+                {
+                    "name": "order",
+                    "type": "int",
+                    "required": false,
+                    "min_value": 1,
+                    "max_value": 15
+                },
+                {
+                    "name": "meta",
+                    "type": "dict",
+                    "required": false,
+                    "validation_rules": [
+                        {
+                            "name": "request_params",
+                            "type": "dict",
+                            "required": false,
+                            "validation_rules": [
+                                {
+                                    "name": "url",
+                                    "type": "str",
+                                    "required": false
+                                },
+                                {
+                                    "name": "method",
+                                    "type": "str",
+                                    "required": false,
+                                    "from_list": ["GET", "POST", "PUT"]
+                                },
+                                {
+                                    "name": "encoding",
+                                    "type": "str",
+                                    "required": false,
+                                    "from_list": ["json", "formdata"]
+                                },
+                                {
+                                    "name": "authorization",
+                                    "type": "dict",
+                                    "required": false,
+                                    "validation_rules": [
+                                        {
+                                            "name": "type",
+                                            "type": "str",
+                                            "required": false,
+                                            "from_list": ["static-token", "basic", "jwt", "oauth2/client-credentials"]
+                                        },
+                                        {
+                                            "name": "host",
+                                            "type": "str",
+                                            "required": false
+                                        },
+                                        {
+                                            "name": "credentials",
+                                            "type": "dict",
+                                            "required": false,
+                                            "validation_rules": [
+                                                {
+                                                    "name": "client_id",
+                                                    "type": "str",
+                                                    "required": false
+                                                },
+                                                {
+                                                    "name": "client_secret",
+                                                    "type": "str",
+                                                    "required": false
+                                                },
+                                                {
+                                                    "name": "scope",
+                                                    "type": "str",
+                                                    "required": false
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "token_type",
+                                            "type": "str",
+                                            "required": false,
+                                            "from_list": ["bearer", "x-header", "other"]
+                                        },
+                                        {
+                                            "name": "token_value",
+                                            "type": "str",
+                                            "required": false
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "headers",
+                                    "type": "dict",
+                                    "required": false
+                                },
+                                {
+                                    "name": "body",
+                                    "type": "list",
+                                    "required": false,
+                                    "validation_rules": [
+                                        {
+                                            "name": "field_name",
+                                            "type": "str",
+                                            "required": false,
+                                            "skip_validation": true
+                                        },
+                                        {
+                                            "name": "field_source",
+                                            "type": "str",
+                                            "required": false,
+                                            "from_list": ["user_input", "authorization", "static", "prev_pipeline_response"],
+                                            "skip_validation": true
+                                        },
+                                        {
+                                            "name": "field_value",
+                                            "type": "any",
+                                            "required": false,
+                                            "skip_validation": true
+                                        },
+                                        {
+                                            "name": "field_path",
+                                            "type": "str",
+                                            "required": false,
+                                            "skip_validation": true
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "response",
+                                    "type": "dict",
+                                    "required": false,
+                                    "validation_rules": [
+                                        {
+                                            "name": "pagination",
+                                            "type": "dict",
+                                            "required": false,
+                                            "validation_rules": [
+                                                {
+                                                    "name": "enabled",
+                                                    "type": "bool",
+                                                    "required": false
+                                                },
+                                                {
+                                                    "name": "options",
+                                                    "type": "dict",
+                                                    "required":false,
+                                                    "validation_rules": [
+                                                        {
+                                                            "name": "strategy",
+                                                            "type": "str",
+                                                            "required": false,
+                                                            "from_list": ["page", "cursor", "offset"]
+                                                        },
+                                                        {
+                                                            "name": "meta",
+                                                            "type": "dict",
+                                                            "required": false,
+                                                            "validation_rules": [
+                                                                {
+                                                                    "name": "page_count_keyword",
+                                                                    "type": "str",
+                                                                    "required": false
+                                                                },
+                                                                {
+                                                                    "name": "current_page_keyword",
+                                                                    "type": "str",
+                                                                    "required": false
+                                                                }
+                                                            ]
+                                                        },{
+                                                            "name": "query_parameters",
+                                                            "type": "dict",
+                                                            "required": false,
+                                                            "validation_rules": [
+                                                                {
+                                                                    "name": "page_param",
+                                                                    "type": "str",
+                                                                    "required": false
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "aggregations",
+                                            "type": "list",
+                                            "required": false,
+                                            "validation_rules": [
+                                                {
+                                                    "name": "response_path",
+                                                    "type": "str",
+                                                    "required": false
+                                                },
+                                                {
+                                                    "name": "fields",
+                                                    "type": "list",
+                                                    "required": false,
+                                                    "validation_rules": [
+                                                        {
+                                                            "name": "field_name",
+                                                            "type": "str",
+                                                            "required": false
+                                                        },
+                                                        {
+                                                            "name": "transformation",
+                                                            "type": "str",
+                                                            "required": false,
+                                                            "from_list": ["string_comma_separated_list"]
+                                                        },
+                                                        {
+                                                            "name": "target_field_name",
+                                                            "type": "str",
+                                                            "required": false
+                                                        }
+
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                                
+                            ]
+                        },
+                        {
+                            "name": "batch_processing",
+                            "type": "dict",
+                            "required": false,
+                            "validation_rules": [
+                                {
+                                    "name": "enabled",
+                                    "type": "bool",
+                                    "required": true
+                                },
+                                {
+                                    "name": "strategy",
+                                    "type": "str",
+                                    "required": false,
+                                    "from_list": ["use_pagination", "custom_batch_size"]
+                                },
+                                {
+                                    "name": "batch_size",
+                                    "type": "int",
+                                    "required": false,
+                                    "min_value": 50,
+                                    "max_value": 2000
+                                }
+                            ]
+
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
