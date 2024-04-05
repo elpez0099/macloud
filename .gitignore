@@ -1,0 +1,3 @@
+.chalice/deployments/
+macloud_env/
+*.pyc

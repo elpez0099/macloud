@@ -155,6 +155,7 @@ class PayloadValidator:
         full_payload = payload
         payload = current_node if current_node is not None else payload
         validation_rules = schema.get('validation_rules')
+
         # Validate payload keys
         PayloadValidator.validate_payload_keys(schema, payload)
 

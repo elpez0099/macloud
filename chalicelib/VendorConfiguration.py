@@ -9,6 +9,7 @@ from .pipeline.PipelineSettings import PipelineSettings
 class VendorConfiguration:
     pipeline = []
     config = {}
+    config_id = None
 
     def __init__(self, payload=None, config_id=None):
         if payload and config_id:
@@ -22,7 +23,23 @@ class VendorConfiguration:
         if config_id is not None:
             self.set_config_from_db(config_id)
 
-    def set_config_from_payload(self, payload):
+    def set_config_attribute(self, payload, attribute):
+        handlers = {
+            'permissions': self.set_permissions,
+            'logging': self.set_logging,
+            'notifications': self.validate_notifications_settings,
+            'execution_settings': self.validate_execution_settings,
+            'pipeline': self.validate_pipeline
+        }
+
+        validator = handlers.get(attribute)
+        validator(payload)
+
+    def set_config_from_payload(self, payload, attribute=None):
+        if attribute is not None:
+            self.set_config_attribute(payload, attribute)
+            return
+
         # Check notifications settings
         self.validate_permissions_settings(payload.get('permissions'))
 
@@ -35,14 +52,14 @@ class VendorConfiguration:
         # Check if execution settings exists and if so validate it
         self.validate_execution_settings(payload.get('execution_settings'))
         # Check pipeline items
-        self.validate_pipeline(payload.get('pipeline'))
+        self.validate_pipeline(payload.get('pipeline', []))
 
         # If payload is valid it is set as the config
         self.config = payload
 
     def set_config_from_db(self, id):
         # Vendor config id lookup and get config paylod
-        print(f'set config from db: {id}')
+        self.config_id = id
         self.config = self.repository.findById(id)
 
     def get_configuration(self):
@@ -62,7 +79,7 @@ class VendorConfiguration:
 
     # permissions settings
     def set_permissions(self, permissions_settings):
-        self.config.permissions = permissions_settings
+        self.config['permissions'] = permissions_settings
 
     def validate_logging_settings(self, logging_settings):
         if logging_settings is None:
@@ -75,7 +92,7 @@ class VendorConfiguration:
 
     # logging settings
     def set_logging(self, logging_settings):
-        self.config.logging = logging_settings
+        self.config['logging'] = logging_settings
 
         return self.config
 
@@ -100,7 +117,7 @@ class VendorConfiguration:
 
     # notification settings
     def set_notifications(self, notification_settings):
-        self.config.notifications = notification_settings
+        self.config['notifications'] = notification_settings
 
         return self.config
 
@@ -154,7 +171,10 @@ class VendorConfiguration:
         self.config['pipeline'] = pipeline_settings
 
     def save(self):
-        self.repository.create(self.config)
+        if not self.config_id:
+            self.repository.create(self.config)
+        else:
+            self.repository.update_by_id(self.config_id, self.config)
 
     def get_config_list(self, filter={}):
         return list(self.repository.find(filter))

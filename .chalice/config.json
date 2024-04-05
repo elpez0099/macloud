@@ -1,0 +1,13 @@
+{
+  "version": "2.0",
+  "app_name": "macloud-inventory",
+  "stages": {
+    "dev": {
+      "api_gateway_stage": "api",
+      "environment_variables": {
+        "database_connection_string": "mongodb+srv://macloud:AgreeMore02.@cluster0.mfrpapw.mongodb.net/?retryWrites=true&w=majority",
+        "database_name": "macloud"
+      }
+    }
+  }
+}
